@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import cv2
 # Load the model.
-model = YOLO('yolov8n.pt')
+model = YOLO('yolov8n.pt') # transfer learning
 
 # Training.
 results = model.train(
