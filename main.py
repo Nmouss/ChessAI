@@ -1,9 +1,11 @@
 # research https://medium.com/@neshpatel/solving-sudoku-part-ii-9a7019d196a2
+from shapely import Polygon
 from ultralytics import YOLO
 import cv2
 from PIL import Image
 import numpy as np
 import cv2
+import torch
 # Load the model.
 # model = YOLO('yolov8n.pt')
 
@@ -16,6 +18,69 @@ import cv2
 #     batch=16,
 #     name='ChessCornerDetection',
 #     project='/Users/nabilmouss/Downloads')
+
+def videoCap(cornerModel):
+    def capture_image(camera_index=0):
+        cap = cv2.VideoCapture(camera_index)
+        if not cap.isOpened():
+            raise Exception("Could not open camera.")
+        ret, frame = cap.read()
+        cap.release()
+        if not ret:
+            raise Exception("Failed to capture image.")
+        return frame
+
+    def process_image(image):
+        """
+        Runs the YOLO model on the given image and returns the results.
+        """
+        results = cornerModel(image)
+        # Extract bounding boxes
+        bboxes = results[0].boxes
+        return results, bboxes
+
+    def draw_bounding_boxes(image, results):
+        """
+        Draws the bounding boxes on the image using the YOLO results.
+        """
+        annotated_image = results[0].plot()  # YOLO provides a method to plot bounding boxes
+        return annotated_image
+
+    def main():
+        while True:
+            # Capture an image
+            print("Capturing image...")
+            image = capture_image()
+            
+            # Run the image through the model
+            results, bboxes = process_image(image)
+            
+            # Draw bounding boxes
+            annotated_image = draw_bounding_boxes(image, results)
+            
+            # Show the frame
+            cv2.imshow("Detected Frame", annotated_image)
+            
+            # Wait for a key press or 1ms delay
+            if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to quit the loop
+                break
+            
+            # Check if the model detected 4 bounding boxes
+            if len(bboxes) == 4:
+                print("Model detected 4 bounding boxes.")
+                break
+            else:
+                print(f"Detected {len(bboxes)} bounding boxes. Retrying...")
+        
+        annotated_image = draw_bounding_boxes(image, results)
+        # Save or use the final image
+        cv2.imwrite("final_image.jpg", image)
+        print("Final image saved as 'final_image.jpg'.")
+        print()
+        # Close all OpenCV windows
+        cv2.destroyAllWindows()
+        return bboxes, image
+    return main()
 
 def ordered_centroid_points(pts):
     # order a list of 4 coordinates:
@@ -38,16 +103,17 @@ def ordered_centroid_points(pts):
 
     return ordered_points
 
-def get_corner_coordinates(results):
+def get_corner_coordinates(boxes):
     # Here I am extracting the bounding boxes coordinates of the corner box detection
     boxesPoints = []
-    for r in results: # makes 4 arrays with 4 points in each array
-        for box in r.boxes:
-            # Extract coordinates in (x, y) format for each corner
-            x_min, y_min, x_max, y_max = box.xyxy[0]  # Get the bounding box
-            pts = np.array([[x_min, y_min], [x_max, y_min], [x_max, y_max], [x_min, y_max]], dtype="float32")
-            ordered_rect = order_points(pts)  # order the points (calls the method)
-            boxesPoints.append(ordered_rect)
+    for i in range(4):
+        for box in boxes:
+            print("BOX", box)
+            # # Extract coordinates in (x, y) format for each corner
+            # x_min, y_min, x_max, y_max = box[i]  # Get the bounding box
+            # pts = np.array([[x_min, y_min], [x_max, y_min], [x_max, y_max], [x_min, y_max]], dtype="float32")
+            # ordered_rect = order_points(pts)  # order the points (calls the method)
+            # boxesPoints.append(ordered_rect)
     return boxesPoints
 
 def calculate_centroid(box):
@@ -85,6 +151,7 @@ def distance_between(p1, p2):
     b = p2[1] - p1[1]
     return np.sqrt((a ** 2) + (b ** 2))
 
+# This function was found online.
 def crop_and_warp(img, crop_rect):
 	"""Crops and warps a rectangular section from an image into a square of similar size."""
 
@@ -126,47 +193,79 @@ def infer_grid(img):
 def draw_grid_on_chessboard(warped_img):
     """Draws an 8x8 grid on a warped chessboard image."""
     grid_img = warped_img.copy()  # Make a copy to draw the grid on
-    squares = infer_grid(warped_img)
+    squares = infer_grid(warped_img) # THIS IS HOW I GET THE SQUARE COORDINATES (split evenly)
 
     # Draw each square as a rectangle on the grid image
     for (p1, p2) in squares:
         cv2.rectangle(grid_img, p1, p2, (0, 255, 0), 3)  # Green grid lines with thickness of 1 pixel
-    
+
     return grid_img
 
-def main(model, image):
-    # Run prediction
-    results = model.predict(
-        source='/Users/nabilmouss/Downloads/IMG_9122.jpeg',
-        line_width=1,
-        conf=0.25,
-        save_txt=False,
-        save=False
-    )
+def fenMatrix(squares):
+    columns = "abcdefgh"  # Chess columns
+    rows = "87654321"     # Chess rows (8 at top, 1 at bottom)
+    
+    fen_labels = [f"{col}{row}" for row in rows for col in columns] # this creates a list of all FEN square labels
+    
+    fen_to_points = {}
+    for i, fen_label in enumerate(fen_labels):
+        
+        x1, y1 = squares[i][0] # top left points
+        x2, y2 = squares[i][1] # bottom right
+        
+        top_left = (x1, y1)
+        top_right = (x2, y1)
+        bottom_left = (x1, y2)
+        bottom_right = (x2, y2)
+        
+        fen_to_points[fen_label] = [top_left, top_right, bottom_left, bottom_right] # maps to the dictionary
+    return fen_to_points # returning a dictionary
 
-    boxesPoints = get_corner_coordinates(results) # there are 16, 4 per corner
+def calculate_iou(box_1, box_2):
+    poly_1 = Polygon(box_1)
+    poly_2 = Polygon(box_2)
+    iou = poly_1.intersection(poly_2).area / poly_1.union(poly_2).area
+    return iou
+
+def calculate_chess_pieces_location():
+    piecesLocation = {}
+
+
+def main(piecesModel, results, image):
+    # Run prediction
+
+    #boxesPoints = get_corner_coordinates(results) # there are 16, 4 per corner (I DONT NEED THIS BUT KEEP JUST IN CASE)
 
     centroids = []
     
     # Here I am getting the centroid (middle) of the boxes coordinates
-    for i in range(4):
-        centroids.append(calculate_centroid(boxesPoints[i])[0])
+    for j in range(4):
+        centroids.append(results[j])
 
     # Apply perspective transform for each detected box
     ordered_boxesPoints = ordered_centroid_points(centroids)
-
+    print(ordered_boxesPoints)
     warped_image = crop_and_warp(image, ordered_boxesPoints) # I NEED THIS TO DO THE CROP AND WARP FOR MY NEXT STEP
 
     split_up_chessboard = draw_grid_on_chessboard(warped_image)
+    
+    print(fenMatrix(infer_grid(warped_image)))
+    #print(calculate_iou(fenMatrix(infer_grid(warped_image))["a8"], fenMatrix(infer_grid(warped_image))["a6"]))
 
     # Here Im showing the chess board
+    cv2.imwrite("warpedChess_image.jpg", warped_image)
     cv2.imshow("Warped Chessboard", split_up_chessboard)  # Display the first warped chessboard
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
 if __name__ == "__main__":
-    model = YOLO("/Users/nabilmouss/Desktop/ChessBoardData/ChessCornerDetection/weights/best.pt")
-    image = cv2.imread("/Users/nabilmouss/Downloads/IMG_9122.jpeg")
-    main(model, image)
+    piecesModel = YOLO("/PATH/TO/YOUR/ChessPieces-Detection/best.pt")
+    cornerModel = YOLO("/PATH/TO/YOUR/ChessCorner-Detection/best.pt")
+    boxes, image = videoCap(cornerModel)
+    xywh = boxes.xywh.detach().numpy()  # Convert 'xywh' to NumPy array
+    centroids = xywh[:, :2]
+    main(piecesModel, centroids, image)
+
+
 
 
