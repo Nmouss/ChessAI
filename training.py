@@ -15,3 +15,5 @@ results = model.train(
     batch=16,
     name='ChessCornerDetection',
     project='/PATH/TO/YOUR/DIRECTORY')
+
+# I ENDED UP USING GOOGLE COLAB TO TRAIN THE MODEL
