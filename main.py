@@ -259,7 +259,7 @@ def main(piecesModel, results, image):
     cv2.destroyAllWindows()
     
 if __name__ == "__main__":
-    piecesModel = YOLO("/PATH/TO/YOUR/ChessPieces-Detection/best.pt")
+    piecesModel = YOLO("/PATH/TO/YOUR/ChessPieces-Detection/best.pt") # this needs to be retrained
     cornerModel = YOLO("/PATH/TO/YOUR/ChessCorner-Detection/best.pt")
     boxes, image = videoCap(cornerModel)
     xywh = boxes.xywh.detach().numpy()  # Convert 'xywh' to NumPy array
