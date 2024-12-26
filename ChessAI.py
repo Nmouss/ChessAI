@@ -1,6 +1,7 @@
 # research https://medium.com/@neshpatel/solving-sudoku-part-ii-9a7019d196a2
 # research https://python-chess.readthedocs.io/en/latest/
 # stockfish video (research): https://www.youtube.com/watch?v=iEaU__JdI7c
+
 from shapely.geometry import Polygon
 from ultralytics import YOLO
 import cv2
