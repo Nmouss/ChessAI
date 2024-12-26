@@ -36,24 +36,19 @@ def videoCap(cornerModel):
 
     def main():
         while True:
-            # Capture an image
             print("Capturing image...")
             image = capture_image()
             
-            # Run the image through the model
-            results, bboxes = process_image(image)
+            results, bboxes = process_image(image) # runs the image through the corner model
             
-            # Draw bounding boxes
-            annotated_image = draw_bounding_boxes(image, results)
+            annotated_image = draw_bounding_boxes(image, results) # creates bounding boxes
             
-            # Show the frame
-            cv2.imshow("Detected Frame", annotated_image)
+            cv2.imshow("Detected Frame", annotated_image) # show the frame with detection
             
-            # Wait for a key press or 1ms delay
             if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to quit the loop
                 break
             
-            # Check if the model detected 4 bounding boxes
+            # check if the model detected 4 bounding boxes
             if len(bboxes) == 4:
                 print("Model detected 4 bounding boxes.")
                 break
@@ -61,16 +56,14 @@ def videoCap(cornerModel):
                 print(f"Detected {len(bboxes)} bounding boxes. Retrying...")
         
         annotated_image = draw_bounding_boxes(image, results)
-        # Save or use the final image
-        cv2.imwrite("final_image.jpg", image)
-        print("Final image saved as 'final_image.jpg'.")
         print()
-        # Close all OpenCV windows
+        
+        # close all OpenCV windows
         cv2.destroyAllWindows()
         bboxes = bboxes.xywh.detach().numpy()  # Convert 'xywh' to NumPy array
-        centroid = bboxes[:, :2]
+        centroid = bboxes[:, :2] # this is the xyxy centroid in NumPy
         return centroid, image
-    return main()
+    return main() # returns centroid, image
 
 def ordered_centroid_points(pts):
     # order a list of 4 coordinates:
@@ -93,19 +86,6 @@ def ordered_centroid_points(pts):
 
     return ordered_points
 
-def get_corner_coordinates(boxes):
-    # Here I am extracting the bounding boxes coordinates of the corner box detection
-    boxesPoints = []
-    for i in range(4):
-        for box in boxes:
-            print("BOX", box)
-            # # Extract coordinates in (x, y) format for each corner
-            # x_min, y_min, x_max, y_max = box[i]  # Get the bounding box
-            # pts = np.array([[x_min, y_min], [x_max, y_min], [x_max, y_max], [x_min, y_max]], dtype="float32")
-            # ordered_rect = order_points(pts)  # order the points (calls the method)
-            # boxesPoints.append(ordered_rect)
-    return boxesPoints
-
 def calculate_centroid(box):
     """
     Calculate the centroid of a bounding box given its coordinates.
@@ -116,11 +96,11 @@ def calculate_centroid(box):
     return np.array([cx, cy])
 
 def order_points(pts):
-    # order a list of 4 coordinates:
-    # 0: top-left,
-    # 1: top-right
-    # 2: bottom-right,
-    # 3: bottom-left
+    # order a list of 4 coordinates
+    # 0: top left,
+    # 1: top right
+    # 2: bottom right,
+    # 3: bottom left
     
     rect = np.zeros((4, 2), dtype = "float32")
     s = pts.sum(axis = 1)
@@ -167,6 +147,7 @@ def crop_and_warp(img, crop_rect):
     # Performs the transformation on the original image
     return cv2.warpPerspective(img, m, (int(side), int(side)))
 
+# This function was found online.
 def infer_grid(img):
     """Infers 64 cell grid from a square image."""
     squares = []
@@ -191,23 +172,23 @@ def draw_grid_on_chessboard(warped_img):
     return grid_img
 
 def fenMatrix(squares):
-    columns = "87654321"   
-    rows = "abcdefgh"
+    columns = "87654321" # keep this as is
+    rows = "abcdefgh" # keep this as is
 
     fen_labels = [f"{row}{col}" for row in rows for col in columns]  # Generate FEN square labels
     fen_to_points = {}
 
     for idx, square in enumerate(squares):
-        # Extract top left and bottom right coordinates of the split up chess board
+        # get top left and bottom right coordinates of the split up chess board
         (x1, y1), (x2, y2) = square
 
-        # Define the four corners
+        # make the four corners
         top_left = (x1, y1)
         top_right = (x2, y1)
         bottom_left = (x1, y2)
         bottom_right = (x2, y2)
 
-        # Map to the corresponding FEN label
+        # map to the FEN label
         fen_to_points[fen_labels[idx]] = [top_left, top_right, bottom_left, bottom_right]
 
     return fen_to_points
@@ -223,47 +204,34 @@ def calculate_iou(box_1, box_2):
     Returns:
         float: IoU value between 0 and 1.
     """
-    # Ensure the bounding boxes are closed polygons
+    # make sure the bounding boxes are closed polygons
     if box_1[0] != box_1[-1]:
         box_1.append(box_1[0])
     if box_2[0] != box_2[-1]:
         box_2.append(box_2[0])
 
-    # Create polygons
+    # create polygons
     poly_1 = Polygon(box_1)
     poly_2 = Polygon(box_2)
 
-    # Check if the polygons are valid
+    # check if the polygons are valid
     if not poly_1.is_valid:
-        poly_1 = poly_1.buffer(0)  # Attempt to fix invalid geometry
+        poly_1 = poly_1.buffer(0)  # fix invalid geometry
     if not poly_2.is_valid:
-        poly_2 = poly_2.buffer(0)  # Attempt to fix invalid geometry
+        poly_2 = poly_2.buffer(0)  # fix invalid geometry
 
-    # Check if union area is valid (indicating potential overlap)
+    # check if union area is valid (indicating potential overlap)
     union_area = poly_1.union(poly_2).area
     if union_area > 0:
-        # Calculate IoU
+        # calculate the intersection of union
         intersection_area = poly_1.intersection(poly_2).area
         iou = intersection_area / union_area
         return iou
     else:
-        # No overlap or invalid geometries
+        # no overlap or invalid geometries
         return 0
 
 def convert_to_coordinates(bbox): # this converts the numpy array for bounding boxes to (x_min, y_min), (x_max, y_min), (x_min, y_max), (x_max, y_max)
-    """
-    Converts a bounding box in the format [x_min, y_min, x_max, y_max]
-    to a list of four corner coordinates.
-
-    Args:
-        bbox (np.ndarray): A NumPy array with bounding box coordinates in 
-                           the format [x_min, y_min, x_max, y_max].
-
-    Returns:
-        list: A list of tuples representing the four corners of the bounding box:
-              [(x_min, y_min), (x_max, y_min), (x_min, y_max), (x_max, y_max)].
-    """
-    #x_min, y_min, x_max, y_max = bbox
     return [
         (bbox[0], bbox[1]),  # Top-left
         (bbox[2], bbox[1]),  # Top-right
@@ -274,27 +242,28 @@ def convert_to_coordinates(bbox): # this converts the numpy array for bounding b
 def mapPiecesLocation(warpedImage, piecesModel):
     results = piecesModel.predict(
     source=warpedImage,
-    iou=0.9,
+    iou=0.9, # intersection of union at least 90%
     line_width=1,
     conf=0.60, # min confidence score is 60 percent
     save_txt=False,
     save=True,
-    max_det = 32) # there will be maximum 32 detections
+    max_det = 32) # there will be maximum 32 detections since at most 32 piece on the board
 
     piecesLocation = {}
     for result in results:
         boxes = result.boxes
         for box in boxes:
-            xyxy = box.xyxy.cpu().numpy()
+            xyxy = box.xyxy.cpu().numpy() # get the coordinates of bounding box
             cls = box.cls.cpu().numpy() # get the class
             confidenceScore = box.conf.cpu().numpy() # get the confidence score of the detection
             if result.names[int(cls[0])] not in piecesLocation:
-                piecesLocation[result.names[int(cls[0])]] = [xyxy, confidenceScore[0]]
+                piecesLocation[result.names[int(cls[0])]] = [xyxy, confidenceScore[0]] # add to piecesLocation
             else:
-                piecesLocation[result.names[int(cls[0])]].append(xyxy)
-                piecesLocation[result.names[int(cls[0])]].append(confidenceScore[0])
+                piecesLocation[result.names[int(cls[0])]].append(xyxy) # add to piecesLocation
+                piecesLocation[result.names[int(cls[0])]].append(confidenceScore[0]) # add to piecesLocation
     return piecesLocation
 
+#this function isn't even working properly I need to go back and fix it
 def findingKing(piecesLocation): # the prediction score is on the even indicies if n is the prediction boxes n+1 is its confidence score
     importantPieces = ['white-king', 'black-king', 'black-queen', 'white-queen']
     if importantPieces[0] not in piecesLocation: # this is trying to find the white king if its not in the hashmap
@@ -372,10 +341,10 @@ def findingKing(piecesLocation): # the prediction score is on the even indicies 
 
 def halveBoundingBox(piecesLocation):
     importantPieces = ['white-king', 'black-king', 'black-queen', 'white-queen']
-    # Ensure that both kings are present, if not, find them
-
-    if importantPieces[0] not in piecesLocation or importantPieces[1] not in piecesLocation:
-        piecesLocation = findingKing(piecesLocation)
+    
+    # ensure that both kings are present, if not, find them
+    if importantPieces[0] not in piecesLocation or importantPieces[1] not in piecesLocation: 
+        piecesLocation = findingKing(piecesLocation) # honestly this line is not even working properly
 
     for piece in importantPieces:
         if piece in piecesLocation:
@@ -433,8 +402,9 @@ def chessAI(FEN_TO_PIECE, turn):
         "white-queen": "Q", "white-bishop": "B", "white-knight": "N"
     }
 
-    rows = "87654321" # I flipped them so that the board will be in my perspective
+    rows = "87654321" # I flipped them so that the board will be in my perspective in the output
     columns = "abcdefgh"
+    
     # convert pieces to Stockfish
     for column in columns:
         for row in rows:
@@ -444,7 +414,7 @@ def chessAI(FEN_TO_PIECE, turn):
     
     boardMapping = ""
     # make the FEN string
-    for row in rows:  # Traverse rows from 8 to 1
+    for row in rows:  # traverse rows from 8 to 1
         count = 0
         rowMapping = ""
         for column in columns:
@@ -473,7 +443,7 @@ def chessAI(FEN_TO_PIECE, turn):
     boardMapping += f" {turn}"
     print(f"FEN string: {boardMapping}")
 
-    # Create the chess board using the generated FEN string
+    # create the chess board using the generated FEN string
     try:
         board = chess.Board(boardMapping[:-2]) # this removes " w" or " b"
         print(board)
@@ -496,35 +466,26 @@ def chessAI(FEN_TO_PIECE, turn):
             print()
             print("Thinking...")
             print()
-            # Get the best move
-            result = engine.play(board, chess.engine.Limit(time=1.0))  # Adjust time limit if needed
+            # get the best move
+            result = engine.play(board, chess.engine.Limit(time=1.0))  # the engine is predicting with a 1 second thinking time
             print("Best move:", result.move)
 
-            # Apply the best move to the board
+            # apply the best move to the board
             board.push(result.move)
             print("Updated board:")
             print(board)
 
-    # print(FEN_TO_PIECE)
-            
 def main(piecesModel, centroid, image, turn):
-    #boxesPoints = get_corner_coordinates(results) # there are 16, 4 per corner (I DONT NEED THIS BUT KEEP JUST IN CASE)
-
     centroids = []
-    
-    # Here I am getting the centroid (middle) of the boxes coordinates
     for j in range(4):
         centroids.append(centroid[j])
 
-    # Apply perspective transform for each detected box
     ordered_boxesPoints = ordered_centroid_points(centroids)
     
-    warped_image = crop_and_warp(image, ordered_boxesPoints) # I NEED THIS TO DO THE CROP AND WARP FOR MY NEXT STEP
+    warped_image = crop_and_warp(image, ordered_boxesPoints) 
 
     fenDictonary = fenMatrix(infer_grid(warped_image))
 
-    # split_up_chessboard = draw_grid_on_chessboard(warped_image)
-    
     piecesLocation = mapPiecesLocation(warped_image, piecesModel)
 
     processedLocations = halveBoundingBox(piecesLocation)
@@ -533,22 +494,5 @@ def main(piecesModel, centroid, image, turn):
 
     chessAI(FEN_TO_PIECE, turn)
 
-    # print(fenMatrix(infer_grid(warped_image)))
-    #print(calculate_iou(fenMatrix(infer_grid(warped_image))["a8"], fenMatrix(infer_grid(warped_image))["a6"]))
-
-    """
-    Next step I need to only get the lower half of the bounding box for the king and queen then...
-    Next step i need to do after I train the model is to run the chess pieces model on the warped_image and get the bounding boxes
-    """
-
-    # Here Im showing the chess board
-    # cv2.imwrite("/Users/nabilmouss/Desktop/ChessBoardData/WarpedChess-PIECES/warpedChess_image60.jpg", results)
-
-    # cv2.imshow("Warped Chessboard", split_up_chessboard)  # Display the first warped chessboard
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
 if "__main__" == __name__: # you can call the functions from the direct script if you want
     pass 
-
-
