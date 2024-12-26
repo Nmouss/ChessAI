@@ -3,5 +3,7 @@ This project was a project that combined all of my knowledge in computer vision,
 
 # How can I use this?
 You will need:
+
 -External webcam
+
 The ChessAI script has the algorithms that processes the images finds where the chess board corners are and find where the chess pieces are. Since I cannot attach the model here you can contact me or I will link a google drive for the models but I haven't decided what I want to do yet. My goal 
