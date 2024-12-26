@@ -19,6 +19,19 @@ You will need:
 
 - External webcam
 
+## Packages (For mac users)
+
+```
+pip install ultralytics
+pip install python-chess
+pip install shapely
+pip install opencv-python
+pip install numpy
+brew stockfish
+
+run this command to find stockfish in files: which stockfish
+```
+
 The ChessAI script has the algorithms that processes the images finds where the chess board corners are and find where the chess pieces are. Since I cannot attach the model here you can contact me or I will link a google drive for the models but I haven't decided what I want to do yet. Run the main script with the model detecting corners and chess pieces.
 
 # Goal
