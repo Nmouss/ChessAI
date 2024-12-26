@@ -476,6 +476,7 @@ def chessAI(FEN_TO_PIECE, turn):
             print("Updated board:")
             print(board)
 
+# This function is executing everything
 def main(piecesModel, centroid, image, turn):
     centroids = []
     for j in range(4):
