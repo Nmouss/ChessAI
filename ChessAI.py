@@ -263,7 +263,8 @@ def mapPiecesLocation(warpedImage, piecesModel):
                 piecesLocation[result.names[int(cls[0])]].append(confidenceScore[0]) # add to piecesLocation
     return piecesLocation
 
-#this function isn't even working properly I need to go back and fix it
+# This function isn't even working properly I need to go back and fix it
+# As long as the model predicts the right pieces this function is not needed
 def findingKing(piecesLocation): # the prediction score is on the even indicies if n is the prediction boxes n+1 is its confidence score
     importantPieces = ['white-king', 'black-king', 'black-queen', 'white-queen']
     if importantPieces[0] not in piecesLocation: # this is trying to find the white king if its not in the hashmap
