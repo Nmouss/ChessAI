@@ -1,5 +1,5 @@
 # What is this?
-This project was a project that combined all of my knowledge in computer vision, OOP, machine learning and software engineering which includes reading documentation. I also learned a lot between GPUs, TPUs and CPUs when I was training my chess pieces model on a GTX 1080Ti.
+This project is a project that combined all of my knowledge in computer vision, OOP, machine learning, software engineering, and reading documentation. I also learned a lot between GPUs, TPUs and CPUs when I was training my chess pieces model on a GTX 1080Ti.
 
 # Packages (For mac users)
 
