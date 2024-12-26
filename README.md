@@ -36,3 +36,8 @@ The ChessAI script has the algorithms that processes the images finds where the 
 
 # Goal
 My goal is to create glasses that a player can wear that has buttons so that they can either speak to the mic or click buttons so that the AI knows if its whites or blacks turn. So this project is not done but the main AI algorithm and computer vision parts are all done!
+
+# Example
+
+
+
