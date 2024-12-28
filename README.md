@@ -1,19 +1,6 @@
 # What is this?
 This project is a project that combined all of my knowledge in computer vision, OOP, machine learning, software engineering, and reading documentation. I also learned a lot between GPUs, TPUs and CPUs when I was training my chess pieces model on a GTX 1080Ti.
 
-# Packages (For mac users)
-
-```
-pip install ultralytics
-pip install python-chess
-pip install shapely
-pip install opencv-python
-pip install numpy
-brew stockfish
-
-run this command to find stockfish in files: which stockfish
-```
-
 # How can I use this?
 You will need:
 
