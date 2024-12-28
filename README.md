@@ -26,5 +26,11 @@ My goal is to create glasses that a player can wear that has buttons so that the
 
 # Example
 
+Its your turn to move as white what would you do? Ask AI!
+
+Step 1) Run the script in main
+
+Step 2) Get the entire board in frame
+![final_image](https://github.com/user-attachments/assets/a58169df-10fb-4768-a709-a25821a714b7)
 
 
