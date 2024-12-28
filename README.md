@@ -14,7 +14,7 @@ pip install python-chess
 pip install shapely
 pip install opencv-python
 pip install numpy
-brew stockfish
+brew stockfish <- this will cause issues for non mac users
 
 run this command to find stockfish in files: which stockfish
 ```
