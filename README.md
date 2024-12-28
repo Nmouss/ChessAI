@@ -44,3 +44,6 @@ My goal is to create glasses that a player can wear that has buttons so that the
 <img width="114" alt="Screenshot 2024-12-27 at 10 42 24 PM" src="https://github.com/user-attachments/assets/c7f1ede3-1f42-4a67-91a6-4f583945f09d" />
 
 ## Step 6) Move your piece in real life.
+
+# Final Remarks
+I really enjoyed working on this project. I was inspired by someone who made a sudoku solver and their methodology was really similar to what I created. I really do enjoy chess as a hobby so combining computer vision a field that I am trying to learn and my hobby made me excited about this project. In conclusion I really learned a lot on how computer vision can actually be used instead of looking at bounding boxes or counting cars (another project I did).
