@@ -48,6 +48,8 @@ Look at the output that is given (Again I want this to be over voice command in 
 
 <img width="114" alt="Screenshot 2024-12-27 at 10 42 24 PM" src="https://github.com/user-attachments/assets/c7f1ede3-1f42-4a67-91a6-4f583945f09d" />
 
+* Capital letters are white pieces and lower case are black pieces
+
 ## Step 6) 
 Move your piece in real life. Don't forget this step!!!
 
