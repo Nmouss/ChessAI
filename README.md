@@ -36,19 +36,28 @@ Step 2) Get the entire board in frame
 Step 3) Get the 4 corner detections
 ![annoted_corners](https://github.com/user-attachments/assets/8033eba9-e958-4521-9270-90b5a8edb26c)
 
-Step 4) Make sure the chess pieces are correct (the biggest issues are the king and queen). Heres whats happening behind the scene.
+# Step 4) Make sure the chess pieces are correct (the biggest issues are the king and queen). Heres whats happening behind the scene.
 ![image0](https://github.com/user-attachments/assets/b6303c0e-6e47-43bc-bc0a-59da4b0e8a8a)
 
-Step 5) Look at the output that is given (Again I want this to be over voice command in the future!)
+# Step 5) Look at the output that is given (Again I want this to be over voice command in the future!)
+
 Inital board
 . . . r . . . r
+
 . p k . . p p p
+
 p . P . p n . .
+
 . . b p . . . .
+
 . P . . . . . .
+
 . . . P B . . .
+
 . q . . P P P P
+
 R N . . K B . R
+
 
 Thinking...
 
