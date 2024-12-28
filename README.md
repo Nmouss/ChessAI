@@ -57,4 +57,4 @@ Note: Capital letters are white pieces and lower case are black pieces
 Move your piece in real life. Don't forget this step!!!
 
 # Final Remarks
-I really enjoyed working on this project. I was inspired by someone who made a sudoku solver and their methodology was really similar to what I created. I really do enjoy chess as a hobby so combining computer vision a field that I am trying to learn and my hobby made me excited about this project. In conclusion I really learned a lot on how computer vision can actually be used instead of looking at bounding boxes or counting cars (another project I did).
+I really enjoyed working on this project. I was inspired by someone who made a sudoku solver and their methodology was really similar to what I created. I really do enjoy chess as a hobby so combining computer vision a field that I am trying to learn and my hobby made me excited about this project. In conclusion I learned a lot on how computer vision can actually be used instead of looking at bounding boxes or counting cars (another project I did).
