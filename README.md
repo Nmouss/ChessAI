@@ -33,14 +33,17 @@ Run the script in main.py and type whos turn it is (I will hopefully have button
 
 ## Step 2) 
 Get the entire board in frame
+
 ![final_image](https://github.com/user-attachments/assets/a58169df-10fb-4768-a709-a25821a714b7)
 
 ## Step 3) 
 Get the 4 corner detections
+
 ![annoted_corners](https://github.com/user-attachments/assets/8033eba9-e958-4521-9270-90b5a8edb26c)
 
 ## Step 4) 
 Make sure the chess pieces are correct (the biggest issues are the king and queen). Heres whats happening behind the scene.
+
 ![image0](https://github.com/user-attachments/assets/b6303c0e-6e47-43bc-bc0a-59da4b0e8a8a)
 
 ## Step 5) 
@@ -48,7 +51,7 @@ Look at the output that is given (Again I want this to be over voice command in 
 
 <img width="114" alt="Screenshot 2024-12-27 at 10 42 24 PM" src="https://github.com/user-attachments/assets/c7f1ede3-1f42-4a67-91a6-4f583945f09d" />
 
-###Note: Capital letters are white pieces and lower case are black pieces
+Note: Capital letters are white pieces and lower case are black pieces
 
 ## Step 6) 
 Move your piece in real life. Don't forget this step!!!
