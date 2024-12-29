@@ -8,7 +8,7 @@ if turn == 'w' or turn == 'white':
 else:
     turn = 'b'
 
-piecesModel = YOLO("/Users/nabilmouss/Desktop/ChessBoardData/ChessPieces-Detection/best.pt")
-cornerModel = YOLO("/Users/nabilmouss/Desktop/ChessBoardData/ChessCorner-Detection/best.pt")
+piecesModel = YOLO("/PATH/TO/YOUR/DETECTION/PIECES/MODEL.pt")
+cornerModel = YOLO("/PATH/TO/YOUR/DETECTION/CORNER/MODELpt")
 centroid, images = Chess.videoCap(cornerModel)
 Chess.main(piecesModel, centroid, images, turn)
