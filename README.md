@@ -37,7 +37,7 @@ Get the entire board in frame
 ![final_image](https://github.com/user-attachments/assets/a58169df-10fb-4768-a709-a25821a714b7)
 
 ## Step 3) 
-Get the 4 corner detections
+Get the 4 corner detections.
 
 ![annoted_corners](https://github.com/user-attachments/assets/8033eba9-e958-4521-9270-90b5a8edb26c)
 
