@@ -167,7 +167,7 @@ def draw_grid_on_chessboard(warped_img):
 
     # Draw each square as a rectangle on the grid image
     for (p1, p2) in squares:
-        cv2.rectangle(grid_img, p1, p2, (0, 255, 0), 3)  # Green grid lines with thickness of 1 pixel
+        cv2.rectangle(grid_img, p1, p2, (0, 255, 0), 3)  # Green grid lines with thickness of 1 pixel i.e (0, 255, 0) and p1 & p2 are opposite vertice points
 
     return grid_img
 
