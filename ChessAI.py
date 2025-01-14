@@ -98,7 +98,7 @@ def calculate_centroid(box):
 def order_points(pts):
     # order a list of 4 coordinates
     # 0: top left,
-    # 1: top right
+    # 1: top right,
     # 2: bottom right,
     # 3: bottom left
     
