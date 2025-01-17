@@ -4,7 +4,7 @@ This project is a project that combined all of my knowledge in computer vision, 
 # How can I use this?
 You will need:
 
-- External webcam
+- External USB webcam 
 
 ## Packages (For mac users)
 
